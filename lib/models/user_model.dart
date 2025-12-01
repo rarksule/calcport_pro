@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import '../utils/rest_api.dart';
 import 'request_count_model.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
@@ -142,8 +144,12 @@ class UserModel {
   }
 
   Future<void> request() async {
-    state.requestChanged(RequestType.request);
-    await _submitRequest();
+    try {
+      state.requestChanged(RequestType.request);
+      await submitRequestApi(this);
+    } catch (e) {
+      processError(e);
+    }
     state.requestChanged(RequestType.request, false);
     liveStream.emit(setStateM);
     myStream.emit(setStateU);
@@ -189,76 +195,6 @@ class UserModel {
     return false;
   }
 
-  _submitRequest() async {
-    if (invalidAppointmentId.contains(appointment.appointCode)) {
-      throw "Invalid Appointment Id ${appointment.appointCode}";
-    }
-    requestMap["officeId"] = location.officeId;
-    requestMap["deliverySiteId"] = location.deliveryId;
-    requestMap["appointmentIds"] = [appointment.appointCode];
-    requestMap["userName"] = email;
-    requestMap["email"] = email;
-    requestMap["applicants"][0]["firstName"] = eName;
-    requestMap["applicants"][0]["middleName"] = efName;
-    requestMap["applicants"][0]["lastName"] = egName;
-    requestMap["applicants"][0]["geezFirstName"] = gName;
-    requestMap["applicants"][0]["geezMiddleName"] = gfName;
-    requestMap["applicants"][0]["geezLastName"] = ggName;
-    requestMap["applicants"][0]["dateOfBirth"] = dob;
-    requestMap["applicants"][0]["gender"] = gender;
-    requestMap["applicants"][0]["birthPlace"] = birthPlace;
-    requestMap["applicants"][0]["isUnder18"] = isUnder18;
-    requestMap["applicants"][0]["phoneNumber"] = phone;
-    requestMap["applicants"][0]["address"]["city"] = city;
-    requestMap["applicants"][0]["address"]["region"] = region;
-    final token =
-        state.tokens.data.reversed.where((tkn) => tkn.isActive).firstOrNull;
-    if (token == null) throw "no validToken";
-    requestMap["sessionId"] = token.value;
-
-    try {
-      token.used = true;
-      await makeRequestToPassportApi(
-              endpoint: stateUrl.requestUrl,
-              payload: requestMap,
-              hostHeader: stateUrl.requestHost,
-              token: token)
-          .then((onValue) async {
-        if (onValue.statusCode.isSuccessful()) {
-          final data = RequestDecoder.fromJson(jsonDecode(onValue.body));
-          String name = "$eName $efName";
-          await storeCode(data).then((onValue) {
-            if (appointment.applicationNumber == null) {
-              appointment.applicationNumber = data.applicationNumber;
-              appointment.requestId = data.requestId;
-              appointment.personId = data.personId;
-              appointment.remoteId = onValue.isNotEmpty ? onValue : null;
-              var modl = AppointmentStatusModel(
-                applicationNumber: appointment.applicationNumber,
-                personId: appointment.personId,
-                requestId: appointment.requestId,
-              );
-              dataCollection.add(DataCollectionModel(name: name, status: modl));
-              liveStream.emit(setStateM);
-              myStream.emit(setStateU);
-            }
-          });
-        } else {
-          if (jsonDecode(onValue.body)['message']
-              .toString()
-              .contains('Appointment Already Selected')) {
-            invalidAppointmentId.add(appointment.appointCode!);
-          }
-          processError(jsonDecode(onValue.body)['message']);
-        }
-        state.removeToken(token);
-      });
-    } catch (onError) {
-      processError(onError);
-      state.removeToken(token);
-    }
-  }
-
   Future<AtachmentDecoder> _uploadAttachment(perId) async {
     if (stateUrl.useDio) {
       FormData formData = FormData.fromMap({
@@ -285,6 +221,9 @@ class UserModel {
       multiPartRequest.files
           .add(await http.MultipartFile.fromPath("11", idPath));
       // headerMap
+      if (!stateUrl.withNoHost) {
+        headerMap[HttpHeaders.hostHeader] = stateUrl.uploadHost;
+      }
       String body = "";
       multiPartRequest.headers.addAll(headerMap);
       await multiPartRequest.send().then((res) async {
@@ -310,7 +249,7 @@ class UserModel {
     paymentMap["requestId"] = requestId;
 
     try {
-      await makeRequestToPassportApi(
+      await makeRequestToPassportEndpoint(
               endpoint: stateUrl.paymentUrl,
               payload: paymentMap,
               hostHeader: stateUrl.paymentHost)

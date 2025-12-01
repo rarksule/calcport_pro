@@ -7,6 +7,7 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../models/user_model.dart';
 import '../utils/common.dart';
+import '../utils/constants.dart';
 import '../utils/network.dart';
 import 'user_info.dart';
 
@@ -317,6 +318,25 @@ class _ExcutePageState extends State<ExcutePage> {
                   },
                 ),
                 64.height,
+                ...retrivedappointments.keys.map((e) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(),
+                      Text(cities.firstWhere((c) => c.officeId == e).label),
+                      ...retrivedappointments.values.map((e) {
+                        return Wrap(
+                          children: e
+                              .map((ap) => Text("  ${ap.short}  ",style: TextStyle(color: invalidAppointmentId.contains(ap) ? Colors.red : Colors.green),).onTap(() {
+                                    ap.copyToClipboard();
+                                  }))
+                              .toList(),
+                        );
+                      }),
+                      
+                    ],
+                  );
+                })
               ],
             ),
           ),

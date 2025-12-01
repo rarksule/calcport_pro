@@ -72,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
     socket.on('GetToken', (data) {
       if (data != null && data["user"] == appUserData.tokenId) {
         state.addToken(TokenModel(
-            expireTime: DateTime.now().add(Duration(minutes: 5)),
+            expireTime: DateTime.now().add(Duration(minutes: 4,seconds: 50)),
             id: data["token"]
                 .toString()
                 .short, //random.nextInt(16777216).toRadixString(16),
@@ -351,13 +351,25 @@ class _MainScreenState extends State<MainScreen> {
             e.appointment.appointCode == null &&
             e.location.officeId == officeId)
         .toList();
-    var userT = usersT.first;
-    if (!stateUrl.isLocal && users.data.any((usr) => usr.appointment.appointCode == apptCode)) {
-      return;
+    var userT = usersT.firstOrNull;
+    try {
+      if (users.data.any((usr) => usr.appointment.appointCode == apptCode)) {
+        return;
+      }
+      retrivedappointments.update(officeId, (values) {
+        values.add(apptCode);
+        return values;
+      }, ifAbsent: () {
+        final values = <String>{};
+        values.add(apptCode);
+        return values;
+      });
+    } catch (e) {
+      //
     }
-    userT.appointment.appointCode = apptCode;
+    userT?.appointment.appointCode = apptCode;
     setState(() {});
-    userT.request();
+    userT?.request();
   }
 
   clearState() {

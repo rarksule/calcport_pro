@@ -32,7 +32,6 @@ Future<bool> autenticateApi(String value) async {
 
 http.Client client = http.Client();
 
-
 Future<http.Response> makeRequestToMyApi(
   String endpoint,
   Map body,
@@ -47,13 +46,13 @@ Future<http.Response> makeRequestToMyApi(
 
     logstring.add(
         '\n$called ==> ${TimeWidgetState.time} \n\n Request: \n $body\n  Response :\n $endpoint \n ${response.statusCode}\n ${response.body}\n');
-    log(logstring);
+    // log(logstring);
     return response;
   } catch (e) {
     log(e.toString());
     logstring.add(
         '\n$called ==> ${TimeWidgetState.time} \n\n Request: \n $body \n  ErrorResponse :\n $endpoint \n $e \n');
-    log(logstring);
+    // log(logstring);
     throw 'Some thing went wrong';
   }
 }
@@ -66,9 +65,8 @@ Dio dio = Dio(BaseOptions(
 // ...existing code...
 Future<ResponseModel> makeRequestToPassportApi(
     {required String endpoint,
-    required dynamic payload,
-    required String hostHeader,
-    TokenModel? token}) async {
+    required FormData payload,
+    required String hostHeader}) async {
   final called = time;
 
   if (!stateUrl.withNoHost) {
@@ -76,72 +74,85 @@ Future<ResponseModel> makeRequestToPassportApi(
   }
 
   try {
-    // Prepare a safe session id for logging (only if payload is a Map)
-    final String sessionIdForLog =
-        (payload is Map && payload.containsKey('sessionId'))
-            ? payload['sessionId'].toString()
-            : '0xx';
-
-    // add upload percentage int
-
-    if (!stateUrl.useDio) {
-      http.Response response = await client
-          .post(Uri.parse(endpoint),
-              body: jsonEncode(payload), headers: headerMap)
-          .timeout(const Duration(seconds: 125),
-              onTimeout: () => throw 'Timeout');
-      logstring.add(
-          '\n$called ==> $time \n\n Request: \n ${payload is Map ? payload.toString().replaceFirst(sessionIdForLog, token?.id ?? '') : payload.toString()}\n  Response :\n $endpoint \n ${response.statusCode}\n ${response.body}\n Upload: $upload%\n');
-      log(logstring);
-      return ResponseModel(
-          body: response.body, statusCode: response.statusCode);
-    } else {
-      // If payload is Dio FormData, send it as-is; otherwise send JSON
-      final bool isFormData = payload is FormData;
-      final dataToSend = isFormData ? payload : jsonEncode(payload);
-
-      Response response = await dio.post(
-        endpoint,
-        data: dataToSend,
-        options: Options(headers: headerMap),
-        onSendProgress: (int sent, int total) {
-          if (total > 0) {
-            upload = ((sent / total) * 100).toInt();
-          } else {
-            // total unknown, keep upload at 0 (or set to -1 to indicate unknown)
-            upload = 0;
-          }
-        },
-      ).timeout(const Duration(seconds: 125), onTimeout: () => throw 'Timeout');
-
-      // Normalize response body to a JSON string so callers can `jsonDecode` it.
-      String bodyString;
-      if (response.data is String) {
-        bodyString = response.data as String;
-      } else {
-        try {
-          bodyString = jsonEncode(response.data);
-        } catch (_) {
-          // Fallback to toString if encoding fails
-          bodyString = response.data.toString();
+    Response response = await dio.post(
+      endpoint,
+      data: payload,
+      options: Options(headers: headerMap),
+      onSendProgress: (int sent, int total) {
+        if (total > 0) {
+          upload = ((sent / total) * 100).toInt();
+        } else {
+          // total unknown, keep upload at 0 (or set to -1 to indicate unknown)
+          upload = 0;
         }
-      }
+      },
+    ).timeout(const Duration(seconds: 60), onTimeout: () => throw 'Timeout');
 
-      logstring.add(
-          '\n$called ==> $time \n\n Request: \n ${isFormData ? 'FormData' : payload.toString().replaceFirst(sessionIdForLog, token?.id ?? '')}\n  Response :\n $endpoint \n ${response.statusCode}\n $bodyString\n Upload: $upload%\n');
-      log(logstring);
-      return ResponseModel(
-          body: bodyString, statusCode: response.statusCode ?? 0);
+    // Normalize response body to a JSON string so callers can `jsonDecode` it.
+    String bodyString;
+    if (response.data is String) {
+      bodyString = response.data as String;
+    } else {
+      try {
+        bodyString = jsonEncode(response.data);
+      } catch (_) {
+        bodyString = response.data.toString();
+      }
     }
+
+    logstring.add(
+        '\n$called ==> $time \n\n Request: \n FormData $endpoint \n ${response.statusCode}\n $bodyString\n Upload: $upload%\n');
+    // log(logstring);
+    return ResponseModel(
+        body: bodyString, statusCode: response.statusCode ?? 0);
   } catch (e) {
     log(e.toString());
+    if (e is DioException) {
+      logstring.add(
+          '\n$called ==> $time \n\n Request: \n FormData \n  ErrorResponse :\n $endpoint \n ${e.response?.data.toString()} \n');
+      // log(logstring);
+      throw '${e.response?.data.toString()}';
+    }
     logstring.add(
-        '\n$called ==> $time \n\n Request: \n ${payload.toString().replaceFirst(payload["sessionId"], token?.id ?? '')}\n  ErrorResponse :\n $endpoint \n $e \n');
-    log(logstring);
+        '\n$called ==> $time \n\n Request: \n FormData \n  ErrorResponse :\n $endpoint \n $e \n');
     throw 'Some thing went wrong';
   }
 }
-// ...existing code...
+
+Future<ResponseModel> makeRequestToPassportEndpoint(
+    {required String endpoint,
+    required Map payload,
+    required String hostHeader,
+    TokenModel? tkn}) async {
+  final called = time;
+
+  if (!stateUrl.withNoHost) {
+    headerMap[HttpHeaders.hostHeader] = hostHeader;
+  }
+   TokenModel? token = tkn;
+  try {
+   
+    // Prepare a safe session id for logging (only if payload is a Map)
+    final String sessionIdForLog =
+        token != null ? payload['sessionId'].toString() : '0xx';
+
+    http.Response response = await client
+        .post(Uri.parse(endpoint),
+            body: jsonEncode(payload), headers: headerMap)
+        .timeout(const Duration(seconds: 125),
+            onTimeout: () => throw 'Timeout');
+    logstring.add(
+        '\n$called ==> $time \n\n Request: \n ${payload.toString().replaceFirst(sessionIdForLog, token?.id ?? '')}\n  Response :\n $endpoint \n ${response.statusCode}\n ${response.body}\n');
+    // log(logstring);
+    return ResponseModel(body: response.body, statusCode: response.statusCode);
+  } catch (e) {
+    log(e.toString());
+    logstring.add(
+        '\n$called ==> $time \n\n ErrorRequest: \n ${payload.toString().replaceFirst(payload["sessionId"], token?.id ?? '')}\n  ErrorResponse :\n $endpoint \n $e \n');
+    // log(logstring);
+    throw 'Some thing went wrong';
+  }
+}
 
 Future<bool> signInApi() async {
   final token =
@@ -153,11 +164,11 @@ Future<bool> signInApi() async {
     "sessionId": token.value
   };
   token.used = true;
-  ResponseModel response = await makeRequestToPassportApi(
+  ResponseModel response = await makeRequestToPassportEndpoint(
       endpoint: stateUrl.signInurl,
       payload: payload,
       hostHeader: stateUrl.globalHost,
-      token: null);
+      tkn: token);
   state.removeToken(token);
   if (response.statusCode.isSuccessful()) {
     return true;
@@ -174,27 +185,34 @@ Future<bool> validateOTPApi(String otp) async {
     "email": appUserData.email,
     "otp": otp,
   };
-  ResponseModel response = await makeRequestToPassportApi(
+  ResponseModel response = await makeRequestToPassportEndpoint(
       endpoint: stateUrl.otpverifyUrl,
       payload: payload,
       hostHeader: stateUrl.globalHost);
 
   if (response.statusCode.isSuccessful()) {
     String refreshtoken = jsonDecode(response.body)['refreshToken'];
+    String accessToken = jsonDecode(response.body)['accessToken'];
     DateTime refexpiretime = await getExpireTime(refreshtoken);
+    DateTime accessExpireTime = await getExpireTime(accessToken);
 
     appUserData.accessExpireTime = refexpiretime;
     appUserData.accessToken = refreshtoken;
 
     setValue(APPUSERDATA, appUserData.toJson());
+    await setAccessTokenApi({
+      'accessToken': accessToken,
+      "expireTime": accessExpireTime.toIso8601String(),
+      'authEmail': appUserData.email,
+    });
     await setAccessTokenApi();
     return true;
   }
   throw response.body;
 }
 
-Future<void> setAccessTokenApi() async {
-  var payload = {
+Future<void> setAccessTokenApi([Map? payload]) async {
+  payload ??= {
     'accessToken': appUserData.accessToken,
     "expireTime": appUserData.accessExpireTime.toIso8601String(),
     'authEmail': appUserData.email,
@@ -210,12 +228,16 @@ Future<String> submitAppointmentApi(int officeId) async {
   if (token == null) throw "no validToken";
   appointmentMap["sessionId"] = token.value;
   token.used = true;
-  ResponseModel response = await makeRequestToPassportApi(
+  ResponseModel response = await makeRequestToPassportEndpoint(
       endpoint: stateUrl.appointmentUrl,
       payload: appointmentMap,
       hostHeader: stateUrl.appoinmentHost,
-      token: token);
-  state.removeToken(token);
+      tkn: token);
+  if (response.statusCode != 502) {
+    state.removeToken(token);
+  } else {
+    token.used = false;
+  }
   if (response.statusCode.isSuccessful()) {
     var json = jsonDecode(response.body);
     var appointmentResponses = json['appointmentResponses'][0];
@@ -257,11 +279,15 @@ Future<bool> updateUserData(UserModel user,
     "type": type,
   };
 
-  http.Response response =
-      await makeRequestToMyApi(stateUrl.updateCodeUrl, payload);
-  if (response.statusCode.isSuccessful()) {
-    return true;
-  } else {
+  return await makeRequestToMyApi(stateUrl.updateCodeUrl, payload)
+      .then((response) {
+    if (response.statusCode.isSuccessful()) {
+      return true;
+    } else {
+      return false;
+    }
+  }).catchError((er) {
+    processError(er);
     return false;
-  }
+  });
 }

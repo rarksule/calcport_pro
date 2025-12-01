@@ -84,22 +84,26 @@ class _CalculatorState extends State<Calculator> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
-                  spacing: 36,
+                  spacing: 32,
                   children: [
-                    Icon(Icons.access_time_outlined),
-                    Icon(Icons.movie_outlined),
-                    Icon(Icons.medical_information_outlined),
+                    Image.asset("history.png",
+            color: Colors.white,
+                    fit: BoxFit.fill),
+                    Image.asset("convertor.png",
+            color: Colors.white,
+                    fit: BoxFit.fill),
+                    Image.asset("scientific.png",
+            color: Colors.white,)
                   ],
                 ),
                 8.width,
-                Icon(
-                  Icons.more_outlined,
-                  color: Colors.green,
-                ).onTap(() => clearTapped())
+                8.width,
+                Image.asset("delete.png",
+            color: Colors.green,
+                    fit: BoxFit.fill).onTap(() => clearTapped()),
               ],
             ),
           ),
-          8.height,
           Divider(
             thickness: 0.5,
           ),

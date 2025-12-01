@@ -36,10 +36,18 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - logo.png
-    - cert.crt
-    - cacert.crt
+    - calculator_background.png
+    - calculator_foreground.png
+    - scientific.png
+    - delete.png
+    - convertor.png
+    - history.png
+
 flutter_launcher_icons  : # dart run flutter_launcher_icons
   android: true
+  adaptive_icon_background: calculator_background.png
+  adaptive_icon_foreground: calculator_foreground.png
+  adaptive_icon_foreground_inset: 0
   # ios: true
   image_path: "logo.png"
   min_sdk_android: 21 # android min sdk min:16, default 21 

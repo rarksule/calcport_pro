@@ -21,18 +21,18 @@ InputDecoration myDecoration(String label) => InputDecoration(
 
 void processError(error) {
   log(error);
-  // try {
-  //   toast(error,
-  //       gravity: ToastGravity.TOP,
-  //       textColor: const Color.fromARGB(255, 0, 255, 0),
-  //       bgColor: Colors.transparent);
-  // } catch (e) {
-  //   log(e);
-  //   toast('Some thing went wrong',
-  //       gravity: ToastGravity.TOP,
-  //       textColor: const Color.fromARGB(255, 0, 255, 0),
-  //       bgColor: Colors.transparent);
-  // }
+  try {
+    toast(error,
+        gravity: ToastGravity.TOP,
+        textColor: const Color.fromARGB(255, 0, 255, 0),
+        bgColor: Colors.transparent);
+  } catch (e) {
+    log(e);
+    toast('Some thing went wrong',
+        gravity: ToastGravity.TOP,
+        textColor: const Color.fromARGB(255, 0, 255, 0),
+        bgColor: Colors.transparent);
+  }
 }
 
 void getUniquelocation() {

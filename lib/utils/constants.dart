@@ -53,6 +53,7 @@ String localurl = "10.177.62.70";
 DateTime now = DateTime.now();
 
 List<String> invalidAppointmentId = [];
+Map<int,Set<String>> retrivedappointments = {};
 
 final List<String> logstring = [];
 const line =

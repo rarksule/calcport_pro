@@ -248,48 +248,44 @@ class UserModel {
     paymentMap["PaymentOptionsId"] = payment;
     paymentMap["requestId"] = requestId;
 
-    try {
-      await makeRequestToPassportEndpoint(
-              endpoint: stateUrl.paymentUrl,
-              payload: paymentMap,
-              hostHeader: stateUrl.paymentHost)
-          .then((onValue) async {
-        String data = '';
-        if (onValue.statusCode.isSuccessful()) {
-          data = jsonDecode(onValue.body)['orderId'];
-        } else if (jsonDecode(onValue.body)['message']
-            .contains('Payment Request Already Exist')) {
-          String message = jsonDecode(onValue.body)['message'] as String;
-          String errorMessage =
-              'Payment Request Already Exist Please pay using this Order Order Code =';
-          if (message.contains(errorMessage)) {
-            data = message.replaceFirst(errorMessage, '');
-          }
-        } else {
-          return false;
+    await makeRequestToPassportEndpoint(
+            endpoint: stateUrl.paymentUrl,
+            payload: paymentMap,
+            hostHeader: stateUrl.paymentHost)
+        .then((onValue) async {
+      String data = '';
+      if (onValue.statusCode.isSuccessful()) {
+        data = jsonDecode(onValue.body)['orderId'];
+      } else if (jsonDecode(onValue.body)['message']
+          .contains('Payment Request Already Exist')) {
+        String message = jsonDecode(onValue.body)['message'] as String;
+        String errorMessage =
+            'Payment Request Already Exist Please pay using this Order Order Code =';
+        if (message.contains(errorMessage)) {
+          data = message.replaceFirst(errorMessage, '');
         }
-        appointment.paymentCode = data;
-        if (appointment.remoteId == null) {
-          appointment.isSynced =
-              await updateUserData(this, requestId.toString(), "payment");
-        } else {
-          appointment.isSynced = await updateUserData(this);
-        }
+      } else {
+        throw jsonDecode(onValue.body)['message'];
+      }
+      appointment.paymentCode = data;
+      if (appointment.remoteId == null) {
+        appointment.isSynced =
+            await updateUserData(this, requestId.toString(), "payment");
+      } else {
+        appointment.isSynced = await updateUserData(this);
+      }
 
-        dataCollection
-            .where((e) => e.status.requestId == requestId)
-            .first
-            .status
-            .paymentCode = data;
-        liveStream.emit(setStateM);
-        myStream.emit(setStateU);
-        return true;
-      }).catchError((onError) {
-        throw onError;
-      });
-    } catch (onError) {
+      dataCollection
+          .where((e) => e.status.requestId == requestId)
+          .first
+          .status
+          .paymentCode = data;
+      liveStream.emit(setStateM);
+      myStream.emit(setStateU);
+      return true;
+    }).catchError((onError) {
       processError(onError);
-    }
+    });
     return false;
   }
 }

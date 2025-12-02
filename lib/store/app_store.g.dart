@@ -9,18 +9,19 @@ part of 'app_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$AppStore on _AppStore, Store {
-  late final _$tokensAtom = Atom(name: '_AppStore.tokens', context: context);
+  late final _$tokensLengthAtom =
+      Atom(name: '_AppStore.tokensLength', context: context);
 
   @override
-  TokensListModel get tokens {
-    _$tokensAtom.reportRead();
-    return super.tokens;
+  int get tokensLength {
+    _$tokensLengthAtom.reportRead();
+    return super.tokensLength;
   }
 
   @override
-  set tokens(TokensListModel value) {
-    _$tokensAtom.reportWrite(value, super.tokens, () {
-      super.tokens = value;
+  set tokensLength(int value) {
+    _$tokensLengthAtom.reportWrite(value, super.tokensLength, () {
+      super.tokensLength = value;
     });
   }
 
@@ -64,6 +65,14 @@ mixin _$AppStore on _AppStore, Store {
     return _$addTokenAsyncAction.run(() => super.addToken(val));
   }
 
+  late final _$tokenChangedAsyncAction =
+      AsyncAction('_AppStore.tokenChanged', context: context);
+
+  @override
+  Future<void> tokenChanged() {
+    return _$tokenChangedAsyncAction.run(() => super.tokenChanged());
+  }
+
   late final _$_AppStoreActionController =
       ActionController(name: '_AppStore', context: context);
 
@@ -103,7 +112,7 @@ mixin _$AppStore on _AppStore, Store {
   @override
   String toString() {
     return '''
-tokens: ${tokens},
+tokensLength: ${tokensLength},
 isLoading: ${isLoading},
 requestsCount: ${requestsCount}
     ''';

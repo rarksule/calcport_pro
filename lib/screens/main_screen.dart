@@ -251,6 +251,7 @@ class _MainScreenState extends State<MainScreen> {
                   users.data
                       .insert(userIndex + 1, users.data.removeAt(userIndex));
                 } else if (index == 2) {
+                  setValue(USERS, users.toJson());
                   orderingUsers = false;
                 }
                 setState(() {});
@@ -287,7 +288,7 @@ class _MainScreenState extends State<MainScreen> {
                                 setState(() {});
                               },
                               onTap: () async {
-                                if (state.tokens.data.isNotEmpty) {
+                                if (stateTokens.data.isNotEmpty) {
                                   await submitAppointment(e);
                                   setState(() {});
                                 }
@@ -307,7 +308,7 @@ class _MainScreenState extends State<MainScreen> {
                                       ),
                                       Observer(builder: (context) {
                                         return Text(
-                                          "APTM ${state.tokens.data.where((tkn) => tkn.isActive).length}",
+                                          "APTM ${state.tokensLength}",
                                           softWrap: false,
                                           style: TextStyle(
                                               overflow: TextOverflow.visible,

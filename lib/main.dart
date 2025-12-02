@@ -2,7 +2,6 @@ import 'dart:math';
 
 import '/models/url_manager_model.dart';
 import '/store/app_store.dart';
-import 'package:mobx/mobx.dart';
 
 import '/models/token_model.dart';
 import '/models/user_model.dart';
@@ -27,8 +26,9 @@ AppUserModel appUserData = AppUserModel(
   remoteCode: '',
 );
 AppStore state = AppStore();
-TokensListModel invalidTokens =
-    TokensListModel(data: ObservableList<TokenModel>.of([]));
+TokensListModel invalidTokens = TokensListModel(data: Set<TokenModel>.of({}));
+TokensListModel stateTokens = TokensListModel(data: Set<TokenModel>.of({}));
+
 UrlManagerModel stateUrl = UrlManagerModel();
 UsersListModel users = UsersListModel(data: [], offices: <int>{});
 Set<DataCollectionModel> dataCollection = {};
@@ -45,7 +45,7 @@ void main() async {
   stateUrl = getJSONAsync('URL_MANAGER').isNotEmpty
       ? UrlManagerModel.fromJson(getJSONAsync('URL_MANAGER'))
       : stateUrl;
-      // createDioWithMultipleCerts();
+  // createDioWithMultipleCerts();
   runApp(const MyApp());
 }
 

@@ -10,8 +10,7 @@ class AppStore = _AppStore with _$AppStore;
 
 abstract class _AppStore with Store {
   @observable
-  TokensListModel tokens =
-      TokensListModel(data: ObservableList<TokenModel>.of([]));
+  int tokensLength = 0;
   @observable
   bool isLoading = false;
 
@@ -25,13 +24,19 @@ abstract class _AppStore with Store {
 
   @action
   Future<void> addToken(TokenModel val) async {
-    for (var tkn in tokens.data) {
+    for (var tkn in stateTokens.data) {
       if (!tkn.isActive) {
         invalidTokens.data.add(tkn);
-        tokens.data.removeWhere((tk) => tk.id == tkn.id);
+        stateTokens.data.removeWhere((tk) => tk.id == tkn.id);
       }
     }
-    tokens.data.add(val);
+    stateTokens.data.add(val);
+    tokensLength = stateTokens.data.length;
+  }
+
+  @action
+  Future<void> tokenChanged() async{
+    tokensLength = stateTokens.data.where((tk)=>tk.isActive).length;
   }
 
   @action
@@ -42,7 +47,8 @@ abstract class _AppStore with Store {
   @action
   void removeToken(TokenModel val) {
     invalidTokens.data.add(val);
-    tokens.data.removeWhere((tk) => tk.id == val.id);
+    stateTokens.data.removeWhere((tk) => tk.id == val.id);
+    tokensLength = stateTokens.data.where((tk)=>tk.isActive).length;
   }
 
   @action

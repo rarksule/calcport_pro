@@ -20,7 +20,7 @@ InputDecoration myDecoration(String label) => InputDecoration(
     );
 
 void processError(error) {
-  log(error);
+  log("\n\n\n\n${error.toString()}\n\n\n");
   try {
     toast(error,
         gravity: ToastGravity.TOP,

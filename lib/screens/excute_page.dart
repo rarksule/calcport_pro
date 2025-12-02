@@ -50,7 +50,7 @@ class _ExcutePageState extends State<ExcutePage> {
           ),
           Observer(builder: (context) {
             return Text(
-              state.tokens.data.length.toString(),
+              state.tokensLength.toString(),
             );
           }),
           8.width,

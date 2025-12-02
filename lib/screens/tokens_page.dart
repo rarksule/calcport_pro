@@ -33,19 +33,28 @@ class _TokensPageState extends State<TokensPage> {
           if (!invalidOnly)
             IconButton(
                 onPressed: () {
-                  TokensPage(invalidOnly: true,).launch(context);
+                  TokensPage(
+                    invalidOnly: true,
+                  ).launch(context);
                 },
-                icon: const Icon(Icons.unarchive))
+                icon: const Icon(Icons.unarchive)),
+          if (!invalidOnly)
+            IconButton(
+                onPressed: () {
+                  stateTokens.data.removeWhere((tk) => !tk.isActive);
+                  state.tokenChanged();
+                  setState(() {});
+                },
+                icon: const Icon(Icons.delete_forever_outlined))
         ],
       ),
       body: ListView.builder(
-          itemCount: invalidOnly
-              ? invalidTokens.data.length
-              : state.tokens.data.length,
+          itemCount:
+              invalidOnly ? invalidTokens.data.length : stateTokens.data.length,
           itemBuilder: (context, index) {
             final token = invalidOnly
                 ? invalidTokens.data.elementAt(index)
-                : state.tokens.data.elementAt(index);
+                : stateTokens.data.elementAt(index);
             return Column(
               children: [
                 Row(
@@ -81,10 +90,12 @@ class _TokensPageState extends State<TokensPage> {
               ],
             );
           }),
-      floatingActionButton: invalidOnly ? FloatingActionButton(
-        onPressed: _save,
-        child: Icon(Icons.file_download_done),
-      ) : null,
+      floatingActionButton: invalidOnly
+          ? FloatingActionButton(
+              onPressed: _save,
+              child: Icon(Icons.file_download_done),
+            )
+          : null,
     );
   }
 
@@ -92,7 +103,8 @@ class _TokensPageState extends State<TokensPage> {
     final tokenString = [];
     final now = DateTime.now();
     for (var tkn in invalidTokens.data) {
-      tokenString.add('Token ${tkn.id} is used at ${tkn.usedAt.toString()}\n \n');
+      tokenString
+          .add('Token ${tkn.id} is used at ${tkn.usedAt.toString()}\n \n');
     }
     try {
       Uint8List bytes = utf8.encode(tokenString.toString());

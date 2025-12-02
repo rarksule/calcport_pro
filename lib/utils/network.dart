@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 
 import '../models/request_decoder.dart';
 import '../models/response_model.dart';
-import '../models/token_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:nb_utils/nb_utils.dart';
 
@@ -122,33 +121,27 @@ Future<ResponseModel> makeRequestToPassportApi(
 Future<ResponseModel> makeRequestToPassportEndpoint(
     {required String endpoint,
     required Map payload,
-    required String hostHeader,
-    TokenModel? tkn}) async {
+    required String hostHeader}) async {
   final called = time;
 
   if (!stateUrl.withNoHost) {
     headerMap[HttpHeaders.hostHeader] = hostHeader;
   }
-   TokenModel? token = tkn;
   try {
    
-    // Prepare a safe session id for logging (only if payload is a Map)
-    final String sessionIdForLog =
-        token != null ? payload['sessionId'].toString() : '0xx';
-
     http.Response response = await client
         .post(Uri.parse(endpoint),
             body: jsonEncode(payload), headers: headerMap)
         .timeout(const Duration(seconds: 125),
             onTimeout: () => throw 'Timeout');
     logstring.add(
-        '\n$called ==> $time \n\n Request: \n ${payload.toString().replaceFirst(sessionIdForLog, token?.id ?? '')}\n  Response :\n $endpoint \n ${response.statusCode}\n ${response.body}\n');
+        '\n$called ==> $time \n\n Request: \n ${payload.toString().replaceFirst(payload['sessionId'] ?? "0xx",payload['sessionId'].toString().validate(value: "no session").short)}\n  Response :\n $endpoint \n ${response.statusCode}\n ${response.body}\n');
     // log(logstring);
     return ResponseModel(body: response.body, statusCode: response.statusCode);
   } catch (e) {
     log(e.toString());
     logstring.add(
-        '\n$called ==> $time \n\n ErrorRequest: \n ${payload.toString().replaceFirst(payload["sessionId"], token?.id ?? '')}\n  ErrorResponse :\n $endpoint \n $e \n');
+        '\n$called ==> $time \n\n ErrorRequest: \n ${payload.toString().replaceFirst(payload['sessionId'] ?? "0xx",payload['sessionId'].toString().validate(value: "no session").short)}\n  ErrorResponse :\n $endpoint \n $e \n');
     // log(logstring);
     throw 'Some thing went wrong';
   }
@@ -156,7 +149,7 @@ Future<ResponseModel> makeRequestToPassportEndpoint(
 
 Future<bool> signInApi() async {
   final token =
-      state.tokens.data.reversed.where((tkn) => tkn.isActive).firstOrNull;
+      stateTokens.data.where((tkn) => tkn.isActive).firstOrNull;
   if (token == null) throw "no validToken";
   Map<String, dynamic> payload = {
     "username": appUserData.email,
@@ -168,7 +161,7 @@ Future<bool> signInApi() async {
       endpoint: stateUrl.signInurl,
       payload: payload,
       hostHeader: stateUrl.globalHost,
-      tkn: token);
+      );
   state.removeToken(token);
   if (response.statusCode.isSuccessful()) {
     return true;
@@ -224,7 +217,7 @@ Future<void> setAccessTokenApi([Map? payload]) async {
 Future<String> submitAppointmentApi(int officeId) async {
   appointmentMap["OfficeId"] = officeId;
   final token =
-      state.tokens.data.reversed.where((tkn) => tkn.isActive).firstOrNull;
+      stateTokens.data.where((tkn) => tkn.isActive).firstOrNull;
   if (token == null) throw "no validToken";
   appointmentMap["sessionId"] = token.value;
   token.used = true;
@@ -232,7 +225,7 @@ Future<String> submitAppointmentApi(int officeId) async {
       endpoint: stateUrl.appointmentUrl,
       payload: appointmentMap,
       hostHeader: stateUrl.appoinmentHost,
-      tkn: token);
+      );
   if (response.statusCode != 502) {
     state.removeToken(token);
   } else {

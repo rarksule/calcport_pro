@@ -26,7 +26,7 @@ abstract class _AppStore with Store {
   Future<void> addToken(TokenModel val) async {
     for (var tkn in stateTokens.data) {
       if (!tkn.isActive) {
-        invalidTokens.data.add(tkn);
+        // invalidTokens.data.add(tkn);
         stateTokens.data.removeWhere((tk) => tk.id == tkn.id);
       }
     }
@@ -45,8 +45,8 @@ abstract class _AppStore with Store {
   }
 
   @action
-  void removeToken(TokenModel val) {
-    invalidTokens.data.add(val);
+  Future<void> removeToken(TokenModel val) async{
+    // invalidTokens.data.add(val);
     stateTokens.data.removeWhere((tk) => tk.id == val.id);
     tokensLength = stateTokens.data.where((tk)=>tk.isActive).length;
   }

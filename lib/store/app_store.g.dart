@@ -73,6 +73,14 @@ mixin _$AppStore on _AppStore, Store {
     return _$tokenChangedAsyncAction.run(() => super.tokenChanged());
   }
 
+  late final _$removeTokenAsyncAction =
+      AsyncAction('_AppStore.removeToken', context: context);
+
+  @override
+  Future<void> removeToken(TokenModel val) {
+    return _$removeTokenAsyncAction.run(() => super.removeToken(val));
+  }
+
   late final _$_AppStoreActionController =
       ActionController(name: '_AppStore', context: context);
 
@@ -82,17 +90,6 @@ mixin _$AppStore on _AppStore, Store {
         _$_AppStoreActionController.startAction(name: '_AppStore.setLoading');
     try {
       return super.setLoading(val);
-    } finally {
-      _$_AppStoreActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void removeToken(TokenModel val) {
-    final _$actionInfo =
-        _$_AppStoreActionController.startAction(name: '_AppStore.removeToken');
-    try {
-      return super.removeToken(val);
     } finally {
       _$_AppStoreActionController.endAction(_$actionInfo);
     }

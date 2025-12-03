@@ -285,6 +285,7 @@ class UserModel {
       return true;
     }).catchError((onError) {
       processError(onError);
+       return false;
     });
     return false;
   }

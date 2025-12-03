@@ -1,7 +1,7 @@
-import 'dart:convert';
-import 'dart:typed_data';
+// import 'dart:convert';
+// import 'dart:typed_data';
 
-import 'package:file_picker/file_picker.dart';
+// import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -30,15 +30,15 @@ class _TokensPageState extends State<TokensPage> {
         title: const Text('Tokens'),
         centerTitle: true,
         actions: [
-          if (!invalidOnly)
-            IconButton(
-                onPressed: () {
-                  TokensPage(
-                    invalidOnly: true,
-                  ).launch(context);
-                },
-                icon: const Icon(Icons.unarchive)),
-          if (!invalidOnly)
+          // if (!invalidOnly)
+          //   IconButton(
+          //       onPressed: () {
+          //         TokensPage(
+          //           invalidOnly: true,
+          //         ).launch(context);
+          //       },
+          //       icon: const Icon(Icons.unarchive)),
+          // if (!invalidOnly)
             IconButton(
                 onPressed: () {
                   stateTokens.data.removeWhere((tk) => !tk.isActive);
@@ -50,11 +50,12 @@ class _TokensPageState extends State<TokensPage> {
       ),
       body: ListView.builder(
           itemCount:
-              invalidOnly ? invalidTokens.data.length : stateTokens.data.length,
+              // invalidOnly ? invalidTokens.data.length :
+               stateTokens.data.length,
           itemBuilder: (context, index) {
-            final token = invalidOnly
-                ? invalidTokens.data.elementAt(index)
-                : stateTokens.data.elementAt(index);
+            final token = 
+            // invalidOnly ? invalidTokens.data.elementAt(index) :
+                 stateTokens.data.elementAt(index);
             return Column(
               children: [
                 Row(
@@ -90,35 +91,35 @@ class _TokensPageState extends State<TokensPage> {
               ],
             );
           }),
-      floatingActionButton: invalidOnly
-          ? FloatingActionButton(
-              onPressed: _save,
-              child: Icon(Icons.file_download_done),
-            )
-          : null,
+      // floatingActionButton: invalidOnly
+      //     ? FloatingActionButton(
+      //         onPressed: _save,
+      //         child: Icon(Icons.file_download_done),
+      //       )
+      //     : null,
     );
   }
 
-  _save() async {
-    final tokenString = [];
-    final now = DateTime.now();
-    for (var tkn in invalidTokens.data) {
-      tokenString
-          .add('Token ${tkn.id} is used at ${tkn.usedAt.toString()}\n \n');
-    }
-    try {
-      Uint8List bytes = utf8.encode(tokenString.toString());
+  // _save() async {
+  //   final tokenString = [];
+  //   final now = DateTime.now();
+  //   for (var tkn in invalidTokens.data) {
+  //     tokenString
+  //         .add('Token ${tkn.id} is used at ${tkn.usedAt.toString()}\n \n');
+  //   }
+  //   try {
+  //     Uint8List bytes = utf8.encode(tokenString.toString());
 
-      // Pick a file
-      final result = await FilePicker.platform.saveFile(
-          type: FileType.custom,
-          fileName:
-              '${now.day}-${now.month}-${now.year} ${now.hour}:${now.minute}:${now.second} tokens.log',
-          bytes: bytes);
+  //     // Pick a file
+  //     final result = await FilePicker.platform.saveFile(
+  //         type: FileType.custom,
+  //         fileName:
+  //             '${now.day}-${now.month}-${now.year} ${now.hour}:${now.minute}:${now.second} tokens.log',
+  //         bytes: bytes);
 
-      toast('file saved at $result');
-    } catch (e) {
-      toast(e.toString());
-    }
-  }
+  //     toast('file saved at $result');
+  //   } catch (e) {
+  //     toast(e.toString());
+  //   }
+  // }
 }

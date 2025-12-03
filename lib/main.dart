@@ -26,7 +26,7 @@ AppUserModel appUserData = AppUserModel(
   remoteCode: '',
 );
 AppStore state = AppStore();
-TokensListModel invalidTokens = TokensListModel(data: Set<TokenModel>.of({}));
+// TokensListModel invalidTokens = TokensListModel(data: Set<TokenModel>.of({}));
 TokensListModel stateTokens = TokensListModel(data: Set<TokenModel>.of({}));
 
 UrlManagerModel stateUrl = UrlManagerModel();

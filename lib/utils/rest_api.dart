@@ -39,11 +39,10 @@ submitRequestApi(UserModel user) async {
   try {
     token.used = true;
     await makeRequestToPassportEndpoint(
-            endpoint: stateUrl.requestUrl,
-            payload: requestMap,
-            hostHeader: stateUrl.requestHost,
-            )
-        .then((onValue) async {
+      endpoint: stateUrl.requestUrl,
+      payload: requestMap,
+      hostHeader: stateUrl.requestHost,
+    ).then((onValue) async {
       if (onValue.statusCode.isSuccessful()) {
         final data = RequestDecoder.fromJson(jsonDecode(onValue.body));
         String name = "${user.eName} ${user.efName}";

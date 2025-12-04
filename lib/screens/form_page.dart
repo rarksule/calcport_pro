@@ -363,7 +363,7 @@ class _FormPageState extends State<FormPage> {
                             allowMultiple: false,
                             type: FileType.image,
                           ); //ImagePicker().pickImage(source: ImageSource.gallery, imageQuality: 100);
-                          
+
                           if (result != null &&
                               result.files.firstOrNull != null) {
                             _birthController.text = result.files.first.path!;

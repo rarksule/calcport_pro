@@ -87,20 +87,19 @@ class _CalculatorState extends State<Calculator> {
                   spacing: 32,
                   children: [
                     Image.asset("history.png",
-            color: Colors.white,
-                    fit: BoxFit.fill),
+                        color: Colors.white, fit: BoxFit.fill),
                     Image.asset("convertor.png",
-            color: Colors.white,
-                    fit: BoxFit.fill),
-                    Image.asset("scientific.png",
-            color: Colors.white,)
+                        color: Colors.white, fit: BoxFit.fill),
+                    Image.asset(
+                      "scientific.png",
+                      color: Colors.white,
+                    )
                   ],
                 ),
                 8.width,
                 8.width,
-                Image.asset("delete.png",
-            color: Colors.green,
-                    fit: BoxFit.fill).onTap(() => clearTapped()),
+                Image.asset("delete.png", color: Colors.green, fit: BoxFit.fill)
+                    .onTap(() => clearTapped()),
               ],
             ),
           ),

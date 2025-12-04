@@ -72,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
     socket.on('GetToken', (data) {
       if (data != null && data["user"] == appUserData.tokenId) {
         state.addToken(TokenModel(
-            expireTime: DateTime.now().add(Duration(minutes: 4,seconds: 50)),
+            expireTime: DateTime.now().add(Duration(minutes: 4, seconds: 50)),
             id: data["token"]
                 .toString()
                 .short, //random.nextInt(16777216).toRadixString(16),
@@ -308,7 +308,7 @@ class _MainScreenState extends State<MainScreen> {
                                       ),
                                       Observer(builder: (context) {
                                         return Text(
-                                          "APTM ${state.tokensLength}",
+                                          "${state.tokensLength} APTM",
                                           softWrap: false,
                                           style: TextStyle(
                                               overflow: TextOverflow.visible,

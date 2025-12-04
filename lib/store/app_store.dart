@@ -6,9 +6,9 @@ import '../models/token_model.dart';
 
 part 'app_store.g.dart';
 
-class AppStore = _AppStore with _$AppStore;
+class AppStore = AppStoreBase with _$AppStore;
 
-abstract class _AppStore with Store {
+abstract class AppStoreBase with Store {
   @observable
   int tokensLength = 0;
   @observable
@@ -24,19 +24,19 @@ abstract class _AppStore with Store {
 
   @action
   Future<void> addToken(TokenModel val) async {
-    for (var tkn in stateTokens.data) {
-      if (!tkn.isActive) {
-        // invalidTokens.data.add(tkn);
-        stateTokens.data.removeWhere((tk) => tk.id == tkn.id);
-      }
-    }
+    // for (var tkn in stateTokens.data) {
+    //   if (!tkn.isActive) {
+    //     // invalidTokens.data.add(tkn);
+    //     stateTokens.data.removeWhere((tk) => tk.id == tkn.id);
+    //   }
+    // }
     stateTokens.data.add(val);
-    tokensLength = stateTokens.data.length;
+    tokensLength = stateTokens.data.where((tk) => tk.isActive).length;
   }
 
   @action
-  Future<void> tokenChanged() async{
-    tokensLength = stateTokens.data.where((tk)=>tk.isActive).length;
+  Future<void> tokenChanged() async {
+    tokensLength = stateTokens.data.where((tk) => tk.isActive).length;
   }
 
   @action
@@ -45,10 +45,10 @@ abstract class _AppStore with Store {
   }
 
   @action
-  Future<void> removeToken(TokenModel val) async{
+  Future<void> removeToken(TokenModel val) async {
     // invalidTokens.data.add(val);
     stateTokens.data.removeWhere((tk) => tk.id == val.id);
-    tokensLength = stateTokens.data.where((tk)=>tk.isActive).length;
+    tokensLength = stateTokens.data.where((tk) => tk.isActive).length;
   }
 
   @action

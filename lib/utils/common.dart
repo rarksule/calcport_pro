@@ -266,38 +266,38 @@ Future<DateTime> getExpireTime(String accessToken) async {
 }
 
 // Future<Dio> createDioWithMultipleCerts() async {
-  // Create security context with NO default roots
-  // final context = SecurityContext(withTrustedRoots: true);
+// Create security context with NO default roots
+// final context = SecurityContext(withTrustedRoots: true);
 
-  // // Load first certificate (HTTP Toolkit .crt)
-  // final cert1 = await rootBundle.load('cert.crt');
-  // context.setTrustedCertificatesBytes(cert1.buffer.asUint8List());
+// // Load first certificate (HTTP Toolkit .crt)
+// final cert1 = await rootBundle.load('cert.crt');
+// context.setTrustedCertificatesBytes(cert1.buffer.asUint8List());
 
-  // // Load second certificate (BurpSuite .der)
-  // final cert2 = await rootBundle.load('cacert.crt');
-  // context.setTrustedCertificatesBytes(cert2.buffer.asUint8List());
+// // Load second certificate (BurpSuite .der)
+// final cert2 = await rootBundle.load('cacert.crt');
+// context.setTrustedCertificatesBytes(cert2.buffer.asUint8List());
 
-  // Add more certificates here if needed
-  // final cert3 = await rootBundle.load('assets/certs/another.crt');
-  // context.setTrustedCertificatesBytes(cert3.buffer.asUint8List());
+// Add more certificates here if needed
+// final cert3 = await rootBundle.load('assets/certs/another.crt');
+// context.setTrustedCertificatesBytes(cert3.buffer.asUint8List());
 
-  // dio = Dio(BaseOptions(
-  // headers: _headers(), // Set your headers
-  // persistentConnection: true,
+// dio = Dio(BaseOptions(
+// headers: _headers(), // Set your headers
+// persistentConnection: true,
 // ));
 
-  // Apply the security context
-  // dio.httpClientAdapter = IOHttpClientAdapter(
-  //   createHttpClient: () {
-  //     final httpClient = HttpClient(context: context);
+// Apply the security context
+// dio.httpClientAdapter = IOHttpClientAdapter(
+//   createHttpClient: () {
+//     final httpClient = HttpClient(context: context);
 
-  //     // Proxy certificates require accepting "bad" certs
-  //     httpClient.badCertificateCallback =
-  //         (X509Certificate cert, String host, int port) => true;
+//     // Proxy certificates require accepting "bad" certs
+//     httpClient.badCertificateCallback =
+//         (X509Certificate cert, String host, int port) => true;
 
-  //     return httpClient;
-  //   },
-  // );
+//     return httpClient;
+//   },
+// );
 
-  // return dio;
+// return dio;
 // }

@@ -209,7 +209,7 @@ class UserModel {
       if (res.statusCode.isSuccessful()) {
         return AtachmentDecoder.fromJson(jsonDecode(res.body));
       } else {
-        throw res;
+        throw jsonDecode(res.body)['message'];
       }
     } else {
       http.MultipartRequest multiPartRequest =
@@ -234,7 +234,7 @@ class UserModel {
         } else {
           logstring.add(
               '$time  Request: \n Upload Error Attachment \n  Response :\n ${res.statusCode}\n $body\n');
-          throw body;
+          throw jsonDecode(body)['message'];
         }
       });
       return AtachmentDecoder.fromJson(jsonDecode(body));
@@ -285,7 +285,7 @@ class UserModel {
       return true;
     }).catchError((onError) {
       processError(onError);
-       return false;
+      return false;
     });
     return false;
   }

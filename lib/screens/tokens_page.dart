@@ -39,23 +39,23 @@ class _TokensPageState extends State<TokensPage> {
           //       },
           //       icon: const Icon(Icons.unarchive)),
           // if (!invalidOnly)
-            IconButton(
-                onPressed: () {
-                  stateTokens.data.removeWhere((tk) => !tk.isActive);
-                  state.tokenChanged();
-                  setState(() {});
-                },
-                icon: const Icon(Icons.delete_forever_outlined))
+          IconButton(
+              onPressed: () {
+                stateTokens.data.removeWhere((tk) => !tk.isActive);
+                state.tokenChanged();
+                setState(() {});
+              },
+              icon: const Icon(Icons.delete_forever_outlined))
         ],
       ),
       body: ListView.builder(
           itemCount:
               // invalidOnly ? invalidTokens.data.length :
-               stateTokens.data.length,
+              stateTokens.data.length,
           itemBuilder: (context, index) {
-            final token = 
-            // invalidOnly ? invalidTokens.data.elementAt(index) :
-                 stateTokens.data.elementAt(index);
+            final token =
+                // invalidOnly ? invalidTokens.data.elementAt(index) :
+                stateTokens.data.elementAt(index);
             return Column(
               children: [
                 Row(

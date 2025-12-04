@@ -132,9 +132,8 @@ class UrlManagerModel {
     };
   }
 
-  String get _myUrl => isLocal
-      ? "http://$localurl:3000"
-      : "https://test.rarksule.com";
+  String get _myUrl =>
+      isLocal ? "http://$localurl:3000" : "https://test.rarksule.com";
 
   // final String _myUrl = "https://test.rarksule.com"/;
 //   final String _myUrl = "http://$localurl:3000";

@@ -327,13 +327,18 @@ class _ExcutePageState extends State<ExcutePage> {
                       ...retrivedappointments.values.map((e) {
                         return Wrap(
                           children: e
-                              .map((ap) => Text("  ${ap.short}  ",style: TextStyle(color: invalidAppointmentId.contains(ap) ? Colors.red : Colors.green),).onTap(() {
+                              .map((ap) => Text(
+                                    "  ${ap.short}  ",
+                                    style: TextStyle(
+                                        color: invalidAppointmentId.contains(ap)
+                                            ? Colors.red
+                                            : Colors.green),
+                                  ).onTap(() {
                                     ap.copyToClipboard();
                                   }))
                               .toList(),
                         );
                       }),
-                      
                     ],
                   );
                 })

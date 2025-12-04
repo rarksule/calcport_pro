@@ -8,9 +8,9 @@ part of 'app_store.dart';
 
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
-mixin _$AppStore on _AppStore, Store {
+mixin _$AppStore on AppStoreBase, Store {
   late final _$tokensLengthAtom =
-      Atom(name: '_AppStore.tokensLength', context: context);
+      Atom(name: 'AppStoreBase.tokensLength', context: context);
 
   @override
   int get tokensLength {
@@ -26,7 +26,7 @@ mixin _$AppStore on _AppStore, Store {
   }
 
   late final _$isLoadingAtom =
-      Atom(name: '_AppStore.isLoading', context: context);
+      Atom(name: 'AppStoreBase.isLoading', context: context);
 
   @override
   bool get isLoading {
@@ -42,7 +42,7 @@ mixin _$AppStore on _AppStore, Store {
   }
 
   late final _$requestsCountAtom =
-      Atom(name: '_AppStore.requestsCount', context: context);
+      Atom(name: 'AppStoreBase.requestsCount', context: context);
 
   @override
   RequestCountModel get requestsCount {
@@ -58,7 +58,7 @@ mixin _$AppStore on _AppStore, Store {
   }
 
   late final _$addTokenAsyncAction =
-      AsyncAction('_AppStore.addToken', context: context);
+      AsyncAction('AppStoreBase.addToken', context: context);
 
   @override
   Future<void> addToken(TokenModel val) {
@@ -66,7 +66,7 @@ mixin _$AppStore on _AppStore, Store {
   }
 
   late final _$tokenChangedAsyncAction =
-      AsyncAction('_AppStore.tokenChanged', context: context);
+      AsyncAction('AppStoreBase.tokenChanged', context: context);
 
   @override
   Future<void> tokenChanged() {
@@ -74,35 +74,35 @@ mixin _$AppStore on _AppStore, Store {
   }
 
   late final _$removeTokenAsyncAction =
-      AsyncAction('_AppStore.removeToken', context: context);
+      AsyncAction('AppStoreBase.removeToken', context: context);
 
   @override
   Future<void> removeToken(TokenModel val) {
     return _$removeTokenAsyncAction.run(() => super.removeToken(val));
   }
 
-  late final _$_AppStoreActionController =
-      ActionController(name: '_AppStore', context: context);
+  late final _$AppStoreBaseActionController =
+      ActionController(name: 'AppStoreBase', context: context);
 
   @override
   void setLoading(bool val) {
-    final _$actionInfo =
-        _$_AppStoreActionController.startAction(name: '_AppStore.setLoading');
+    final _$actionInfo = _$AppStoreBaseActionController.startAction(
+        name: 'AppStoreBase.setLoading');
     try {
       return super.setLoading(val);
     } finally {
-      _$_AppStoreActionController.endAction(_$actionInfo);
+      _$AppStoreBaseActionController.endAction(_$actionInfo);
     }
   }
 
   @override
   void requestChanged(RequestType type, [dynamic isAdd = true]) {
-    final _$actionInfo = _$_AppStoreActionController.startAction(
-        name: '_AppStore.requestChanged');
+    final _$actionInfo = _$AppStoreBaseActionController.startAction(
+        name: 'AppStoreBase.requestChanged');
     try {
       return super.requestChanged(type, isAdd);
     } finally {
-      _$_AppStoreActionController.endAction(_$actionInfo);
+      _$AppStoreBaseActionController.endAction(_$actionInfo);
     }
   }
 

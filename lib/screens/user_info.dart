@@ -90,7 +90,7 @@ class _UserInfoState extends State<UserInfo> {
                   onTap: () async {
                     Clipboard.getData(Clipboard.kTextPlain).then((value) async {
                       if (value?.text != null) {
-                        final authExpretime =  appUserData.authExpireTime;
+                        final authExpretime = appUserData.authExpireTime;
                         appUserData =
                             AppUserModel.fromJson(jsonDecode(value!.text!));
                         appUserData.authExpireTime = authExpretime;

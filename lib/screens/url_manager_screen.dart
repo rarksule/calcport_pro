@@ -18,7 +18,6 @@ class _UrlManagerScreenState extends State<UrlManagerScreen> {
     if (mounted) super.setState(fn);
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -286,16 +285,16 @@ class _UrlManagerScreenState extends State<UrlManagerScreen> {
                         })
                   ],
                 ),
-                if(stateUrl.isLocal)
-                AppTextField(textFieldType: TextFieldType.OTHER,
-                initialValue: localurl,
-                decoration: myDecoration("LocalUrl"),
-                textStyle: TextStyle(color: mypurple),
-                onChanged: (p0){
-                  localurl = p0;
-                },
-                )
-                
+                if (stateUrl.isLocal)
+                  AppTextField(
+                    textFieldType: TextFieldType.OTHER,
+                    initialValue: localurl,
+                    decoration: myDecoration("LocalUrl"),
+                    textStyle: TextStyle(color: mypurple),
+                    onChanged: (p0) {
+                      localurl = p0;
+                    },
+                  )
               ],
             ),
           ),

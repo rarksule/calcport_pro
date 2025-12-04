@@ -71,4 +71,15 @@ class TokenModel {
       "usedAt": usedAt?.toIso8601String(),
     };
   }
+
+// needed to keep uniqu
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TokenModel &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
 }

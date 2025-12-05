@@ -72,7 +72,7 @@ class _MainScreenState extends State<MainScreen> {
     socket.on('GetToken', (data) {
       if (data != null && data["user"] == appUserData.tokenId) {
         state.addToken(TokenModel(
-            expireTime: DateTime.now().add(Duration(minutes: 4, seconds: 50)),
+            expireTime: DateTime.now().add(Duration(seconds: 300)),
             id: data["token"]
                 .toString()
                 .short, //random.nextInt(16777216).toRadixString(16),
@@ -253,6 +253,7 @@ class _MainScreenState extends State<MainScreen> {
                 } else if (index == 2) {
                   setValue(USERS, users.toJson());
                   orderingUsers = false;
+                  orderableUser == null;
                 }
                 setState(() {});
               },

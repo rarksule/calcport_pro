@@ -75,6 +75,11 @@ submitRequestApi(UserModel user) async {
             .contains('Appointment Already Selected')) {
           invalidAppointmentId.add(user.appointment.appointCode!);
         }
+        if (jsonDecode(onValue.body)['message']
+            .toString()
+            .contains('You have reached the maximum')) {
+          maximumReachedUsers.add(user);
+        }
         processError(jsonDecode(onValue.body)['message']);
         state.removeToken(token);
       }

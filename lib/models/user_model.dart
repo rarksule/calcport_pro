@@ -165,9 +165,9 @@ class UserModel {
   }
 
   Future<bool> upload([perId]) async {
-    state.requestChanged(RequestType.upload);
     perId ??= appointment.personId;
     if (perId == null) return false;
+    state.requestChanged(RequestType.upload);
     await _uploadAttachment(perId).then((onValue) async {
       appointment.birthImagePath = onValue.birthImagePath;
       appointment.idImagePath = onValue.idImagePath;
@@ -202,14 +202,20 @@ class UserModel {
         '10': await MultipartFile.fromFile(birthPath),
         '11': await MultipartFile.fromFile(idPath),
       }, ListFormat.multi, false, "------geckoformboundary");
-      var res = await makeRequestToPassportApi(
-          endpoint: stateUrl.uploadUrl,
-          payload: formData,
-          hostHeader: stateUrl.uploadHost);
-      if (res.statusCode.isSuccessful()) {
-        return AtachmentDecoder.fromJson(jsonDecode(res.body));
-      } else {
-        throw jsonDecode(res.body)['message'];
+      try {
+        var res = await makeRequestToPassportApi(
+            endpoint: stateUrl.uploadUrl,
+            payload: formData,
+            hostHeader: stateUrl.uploadHost);
+        if (res.statusCode.isSuccessful()) {
+          return AtachmentDecoder.fromJson(jsonDecode(res.body));
+        } else {
+          throw jsonDecode(res.body)['message'];
+        }
+      } catch (onError) {
+        logstring.add(
+            '$time  Request: \n Upload Error Attachment \n  Response : $onError\n');
+        rethrow;
       }
     } else {
       http.MultipartRequest multiPartRequest =
@@ -236,6 +242,10 @@ class UserModel {
               '$time  Request: \n Upload Error Attachment \n  Response :\n ${res.statusCode}\n $body\n');
           throw jsonDecode(body)['message'];
         }
+      }).catchError((e) {
+        logstring.add(
+            '$time  Request: \n Upload Error Attachment \n  Response :\n $e\n');
+        throw jsonDecode(e)['message'];
       });
       return AtachmentDecoder.fromJson(jsonDecode(body));
     }

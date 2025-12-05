@@ -47,7 +47,11 @@ class _UserWidgetState extends State<UserWidget> {
               child: Text(
                 "${user.eName} ${user.efName}",
                 style: boldTextStyle(
-                    size: 16, color: Color.fromARGB(255, 255, 105, 255)),
+                    size: 16,
+                    color: maximumReachedUsers.any((usr) =>
+                            (usr.uid == user.uid && usr.phone == user.phone))
+                        ? Colors.redAccent
+                        : Color.fromARGB(255, 255, 105, 255)),
               ),
             ),
             16.width,
@@ -92,7 +96,14 @@ class _UserWidgetState extends State<UserWidget> {
                   height: ButtonTheme.of(context).height,
                   child: Center(
                     child: user.appointment.appointCode != null
-                        ? Text(user.appointment.appointCode!.short)
+                        ? Text(
+                            user.appointment.appointCode!.short,
+                            style: TextStyle(
+                                color: invalidAppointmentId
+                                        .contains(user.appointment.appointCode)
+                                    ? Colors.redAccent
+                                    : null),
+                          )
                         : Text(
                             'APNTMT',
                             softWrap: false,

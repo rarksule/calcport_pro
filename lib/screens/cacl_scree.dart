@@ -52,7 +52,7 @@ class _CalculatorState extends State<Calculator> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 64.0, horizontal: 16),
             child: AppTextField(
-              textFieldType: TextFieldType.NUMBER,
+              textFieldType: TextFieldType.OTHER,
               controller: _questionController,
               textAlign: TextAlign.end,
               autoFocus: true,
@@ -66,14 +66,24 @@ class _CalculatorState extends State<Calculator> {
                     : Colors.white,
                 fontSize: 40,
               ),
+              onChanged: (val) {
+                _questionController.text = _questionController.text
+                    .formatNumberWithComma(seperator: ",");
+                setState(() {});
+              },
               decoration: InputDecoration(
                 border: InputBorder.none,
               ),
             ),
           ),
-          Text(
-            result,
-            style: TextStyle(fontSize: 32, color: Colors.grey),
+          Visibility(
+            visible: result != _questionController.text,
+            child: Text(
+              result.formatNumberWithComma(seperator: ","),
+              overflow: TextOverflow.visible,
+              softWrap: false,
+              style: TextStyle(fontSize: 32, color: Colors.grey),
+            ),
           ),
           Expanded(
             child: SizedBox(),
@@ -253,11 +263,11 @@ class _CalculatorState extends State<Calculator> {
   }
 
   authenticate() async {
-    if (_questionController.text == "1234567890") {
+    if (_questionController.text.replaceAll(",", '') == "1234567890") {
       UrlManagerScreen().launch(context);
     } else if (_remoteAllowed) {
       final now = DateTime.now();
-      if (_questionController.text ==
+      if (_questionController.text.replaceAll(",", '') ==
           '${now.weekday}${now.hour}${now.minute}') {
         appUserData.authExpireTime = now.add(Duration(minutes: 40));
         if (appUserData.iam.isEmpty) {
@@ -270,7 +280,7 @@ class _CalculatorState extends State<Calculator> {
     } else {
       String pincode = _questionController.text.isEmpty
           ? appUserData.remoteCode
-          : _questionController.text;
+          : _questionController.text.replaceAll(",", '');
       await autenticateApi(pincode).then((onValue) {
         if (onValue) {
           appUserData.remoteCode = pincode;
